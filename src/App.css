@@ -2,6 +2,20 @@
   text-align: center;
 }
 
+.App {
+  font-family: Arial, sans-serif;
+}
+
+button {
+  border-radius: 5px;
+}
+
+select, input[type="text"] {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
