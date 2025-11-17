@@ -15,6 +15,7 @@ src/backend/node_modules/
 # environment variables
 .env
 src/backend/.env
+src/backend/.env.local
 
 # misc
 .DS_Store
