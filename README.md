@@ -1,70 +1,235 @@
-# Getting Started with Create React App
+# Campus Registration System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A comprehensive full-stack web application for campus registration and student management, built with React.js frontend and Express.js backend.
 
-## Available Scripts
+## 🌟 Features
 
-In the project directory, you can run:
+### ✨ Modern UI/UX
+- **Collapsible Sidebar** with icons and hover tooltips
+- **Responsive Design** that works on mobile and desktop
+- **Interactive Dashboard** with professional animations
+- **Beautiful Reports** with advanced data visualization
 
-### `npm start`
+### 📊 Comprehensive Reporting Suite
+1. **Cumulative Performance** - Overall academic progress tracking
+2. **Error List** - Advanced error analysis with search/sort/export
+3. **Question Review** - Dynamic question navigation and review
+4. **Practice Wrong/Unattempted** - Interactive practice sessions
+5. **Time Taken Analysis** - Performance timing with modal viewer
+6. **Question Paper Weightage** - Complex multi-level table analysis
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 🔔 Communication System
+- **Notifications Center** with detail views
+- **Progress Tracking** for student advancement
+- **Real-time Updates** and alerts
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 🔒 Security & Authentication
+- **JWT-based Authentication** with secure session management
+- **Role-based Access Control**
+- **Profile Management** with photo uploads
 
-### `npm test`
+### ☁️ AWS Integration
+- **S3 Photo Storage** - Complete photo management system
+- **Lambda Deployment** - Serverless backend deployment
+- **CDK Infrastructure** - Infrastructure as code
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🚀 Quick Start
 
-### `npm run build`
+### Prerequisites
+- Node.js 14+ and npm
+- AWS Account with S3 and Lambda access
+- Git for version control
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Installation
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/sudarsan-v/CAMPUS_REGISTRATION.git
+   cd CAMPUS_REGISTRATION
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. **Install Frontend Dependencies**
+   ```bash
+   npm install
+   ```
 
-### `npm run eject`
+3. **Install Backend Dependencies**
+   ```bash
+   cd src/backend
+   npm install
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+4. **Environment Configuration**
+   ```bash
+   # Copy environment template
+   cp src/backend/.env.example src/backend/.env
+   
+   # Edit .env with your credentials
+   nano src/backend/.env
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+5. **Configure Environment Variables**
+   ```env
+   # AWS Configuration
+   AWS_ACCESS_KEY_ID=your_aws_access_key
+   AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+   AWS_REGION=us-east-1
+   S3_BUCKET_NAME=your-s3-bucket
+   
+   # Database Configuration
+   DB_HOST=your_database_host
+   DB_PORT=5432
+   
+   # API Configuration
+   API_BASE_URL=http://localhost:3001
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+6. **Start Development Servers**
+   ```bash
+   # Terminal 1: Frontend (React)
+   npm start
+   
+   # Terminal 2: Backend (Express)
+   cd src/backend
+   npm start
+   ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📦 Deployment
 
-## Learn More
+### AWS Lambda Deployment
+```bash
+# Build and deploy to AWS Lambda
+npm run build
+./deploy-lambda.sh
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Or use the Windows batch file
+deploy-lambda.bat
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### CDK Infrastructure
+```bash
+# Deploy infrastructure with CDK
+cdk deploy
 
-### Code Splitting
+# Follow the CDK deployment guide
+cat CDK-DEPLOYMENT-GUIDE.md
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🗃️ Project Structure
 
-### Analyzing the Bundle Size
+```
+campus-registration/
+├── public/                 # Static assets
+├── src/
+│   ├── components/         # Reusable React components
+│   ├── pages/             # Main application pages
+│   │   ├── StudentDashboard.jsx
+│   │   ├── CumulativePerformancePage.jsx
+│   │   ├── ErrorListPage.jsx
+│   │   ├── NotificationsPage.jsx
+│   │   ├── ProgressReportPage.jsx
+│   │   └── ...
+│   ├── backend/           # Express.js backend
+│   │   ├── server.js      # Main server file
+│   │   ├── lambda-handler.js
+│   │   └── utils/         # Backend utilities
+│   ├── config/            # API configuration
+│   └── utils/             # Frontend utilities
+├── build/                 # Production build files
+├── deploy/                # Deployment scripts
+└── docs/                  # Documentation
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🛠️ Technology Stack
 
-### Making a Progressive Web App
+### Frontend
+- **React 18** with modern hooks
+- **React Router** for navigation
+- **FontAwesome** for icons
+- **Bootstrap** for responsive design
+- **Axios** for API calls
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Backend
+- **Express.js** with middleware
+- **AWS SDK v3** for cloud integration
+- **JWT** for authentication
+- **CORS** for cross-origin requests
 
-### Advanced Configuration
+### Cloud & DevOps
+- **AWS S3** for file storage
+- **AWS Lambda** for serverless functions
+- **CDK** for infrastructure
+- **Git** for version control
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 🎨 Key Features Deep Dive
 
-### Deployment
+### Sidebar Navigation
+- **Auto-collapse/expand** on hover
+- **Icon tooltips** when collapsed
+- **Smooth animations** and transitions
+- **Mobile-responsive** design
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Reporting System
+- **6 different report types** with unique layouts
+- **Advanced data tables** with search/sort/filter
+- **Export functionality** for data analysis
+- **Interactive modals** for detailed views
 
-### `npm run build` fails to minify
+### Photo Management
+- **Drag & drop uploads** to S3
+- **Automatic resizing** and optimization
+- **Secure signed URLs** for access
+- **Delete and replace** functionality
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🚨 Troubleshooting
+
+### Common Issues
+1. **Environment Variables**: Ensure all required variables are set
+2. **AWS Permissions**: Verify S3 and Lambda access rights
+3. **CORS Issues**: Check API configuration for frontend domain
+4. **Build Errors**: Clear node_modules and reinstall
+
+### Debug Resources
+- `LAMBDA-502-TROUBLESHOOTING.md` - Lambda debugging guide
+- `PROFILE_API_DEBUGGING.md` - Profile API issues
+- `DEPLOYMENT-LOG.md` - Deployment history and fixes
+
+## 📞 Support & Documentation
+
+- **Deployment Guide**: `CDK-DEPLOYMENT-GUIDE.md`
+- **Deployment Checklist**: `DEPLOYMENT-CHECKLIST.md`
+- **API Documentation**: `PROFILE_API_FIXED.md`
+- **Troubleshooting**: `LAMBDA-502-TROUBLESHOOTING.md`
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature-name`
+3. Commit changes: `git commit -m 'Add feature'`
+4. Push to branch: `git push origin feature-name`
+5. Submit a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🔄 Version History
+
+- **v1.0** - Initial release with basic functionality
+- **v2.0** - Added comprehensive reporting suite
+- **v3.0** - Implemented modern UI with collapsible sidebar
+- **v4.0** - Complete AWS integration and deployment
+
+## 🎯 Roadmap
+
+- [ ] Real-time notifications with WebSocket
+- [ ] Advanced analytics dashboard
+- [ ] Mobile application development
+- [ ] Multi-language support
+- [ ] Advanced role management
+
+---
+
+**Built with ❤️ by the Campus Registration Team**
+
+For technical support: [sudarsan.v@codonsystems.com](mailto:sudarsan.v@codonsystems.com)
