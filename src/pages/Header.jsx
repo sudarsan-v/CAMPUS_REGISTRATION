@@ -1,13 +1,14 @@
 import React from 'react';
-import { FaUser } from 'react-icons/fa';
+import { FaUser, FaBell } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api-detailed.js';
 
 function Header() {
   const navigate = useNavigate();
   const handleLogout = () => {
-    axios.post('https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/logout')
+    axios.post(API_ENDPOINTS.LOGOUT)
       .then(response => {
         if (response.data.success) {
           window.location.href = '/';
@@ -21,6 +22,11 @@ function Header() {
   const handleLogoClick = () => {
     navigate('/campus');
   };
+
+  const handleNotificationsClick = () => {
+    navigate('/notifications');
+  };
+
   return (
     <div style={{
       backgroundColor: '#57c3e8',
@@ -39,11 +45,32 @@ function Header() {
         MESLOVA
       </span>
       <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <span 
+          style={{ 
+            fontSize: '1.2rem', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px', 
+            cursor: 'pointer',
+            padding: '8px 16px',
+            borderRadius: '20px',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            transition: 'all 0.3s ease',
+            ':hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              transform: 'translateY(-2px)'
+            }
+          }}
+          onClick={handleNotificationsClick}
+          title="View Notifications"
+        >
+          <FaBell /> Notifications
+        </span>
         <span style={{ fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <FaUser /> Welcome MeslovaUser
           <Link to="/change-password" style={{ color: 'white', marginLeft: '16px', textDecoration: 'underline' }}>
-    Change Password
-  </Link>
+            Change Password
+          </Link>
         </span>
         <span
           style={{ fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}

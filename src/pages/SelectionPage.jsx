@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api-detailed.js';
 
 function SelectionPage() {
   const [campuses, setCampuses] = useState([]);
@@ -12,7 +13,7 @@ function SelectionPage() {
 
   useEffect(() => {
     setLoading(true);
-    axios.get('https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/campuses') // Replace with your API URL
+    axios.get(API_ENDPOINTS.CAMPUSES()) // Replace with your API URL
       .then(response => {
         setCampuses(response.data);
       })
@@ -26,7 +27,7 @@ function SelectionPage() {
     setSelectedCourse('');
     setSubjects([]);
     setLoading(true);
-    axios.get(`https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/courses?campus_id=${campus_id}`)
+    axios.get(API_ENDPOINTS.COURSES(campus_id))
       .then(response => {
         setCourses(response.data);
       })
@@ -38,7 +39,7 @@ function SelectionPage() {
     const course_id = e.target.value;
     setSelectedCourse(course_id);
     setLoading(true);
-    axios.get(`https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/subjects?course_id=${course_id}`)
+    axios.get(API_ENDPOINTS.SUBJECTS(course_id))
       .then(response => {
         setSubjects(response.data);
       })

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BarChart, PieChart, LineChart } from '../components/Charts';
 import { getCurrentUser, requireAuth, getUserId } from '../utils/auth';
+import { API_ENDPOINTS } from '../config/api-detailed.js';
 
 const ReportsPage = () => {
   const [loading, setLoading] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
   const [reportData, setReportData] = useState(null);
-
   const [userData, setUserData] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Check authentication and get user data
@@ -70,7 +72,7 @@ const ReportsPage = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/reports/${reportType}/${userId}`
+        API_ENDPOINTS.REPORTS(reportType, userId)
       );
       
       if (response.data.success) {
@@ -86,6 +88,36 @@ const ReportsPage = () => {
   };
 
   const handleReportClick = (reportType) => {
+    if (reportType === 'cumulative-performance') {
+      navigate('/cumulative-performance');
+      return;
+    }
+    
+    if (reportType === 'error-list') {
+      navigate('/error-list');
+      return;
+    }
+    
+    if (reportType === 'question-review') {
+      navigate('/reasons-wrong-attempt/2');
+      return;
+    }
+    
+    if (reportType === 'practice-wrong') {
+      navigate('/practice-wrong-unattempted');
+      return;
+    }
+    
+    if (reportType === 'time-analysis') {
+      navigate('/time-taken');
+      return;
+    }
+    
+    if (reportType === 'question-paper-weightage') {
+      navigate('/question-paper-weightage');
+      return;
+    }
+    
     setSelectedReport(reportType);
     fetchReportData(reportType);
   };

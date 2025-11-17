@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api-detailed';
 
 function EditCampusPage() {
   const { id } = useParams();
@@ -18,7 +19,7 @@ function EditCampusPage() {
 
   useEffect(() => {
     if (id) {
-      axios.get(`https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/editcampus/${id}`)
+      axios.get(API_ENDPOINTS.EDIT_CAMPUS(id))
         .then(response => {
           console.log('Campus data fetched:', response.data);
           setFormData({
@@ -50,7 +51,7 @@ function EditCampusPage() {
       return;
     }
     try {
-      const response = await axios.put(`https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/editcampus/${id}`, formData);
+      const response = await axios.put(API_ENDPOINTS.EDIT_CAMPUS(id), formData);
       if (response.data.success) {
         alert('Campus updated successfully!'); // Or use a better notification
         navigate('/campus'); // Redirect back to campus list

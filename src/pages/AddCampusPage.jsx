@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api-detailed';
 
 function AddCampusPage() {
   const [formData, setFormData] = useState({
@@ -21,7 +22,7 @@ function AddCampusPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/addcampus', formData);
+      const response = await axios.post(API_ENDPOINTS.ADD_CAMPUS, formData);
       if (response.data.success) {
         navigate('/campus'); // Redirect to campus list page after success
       }

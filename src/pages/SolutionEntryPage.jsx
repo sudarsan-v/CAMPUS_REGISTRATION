@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_ENDPOINTS } from '../config/api-detailed.js';
 
 function SolutionEntryPage() {
   const [questionId, setQuestionId] = useState('');
@@ -16,7 +17,7 @@ function SolutionEntryPage() {
       return;
     }
     try {
-      const response = await fetch(`https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/institute/questionreferenceq/${questionId}`);
+      const response = await fetch(API_ENDPOINTS.QUESTION_REFERENCE_BY_ID(questionId));
       const data = await response.json();
       if (data.success && data.data) {
         setQuestionRef(data.data.questionText || '');
@@ -40,7 +41,7 @@ function SolutionEntryPage() {
     e.preventDefault();
     setSuccessMsg('');
     try {
-      const response = await fetch('https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/institute/questionreference', {
+      const response = await fetch(API_ENDPOINTS.QUESTION_REFERENCE(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

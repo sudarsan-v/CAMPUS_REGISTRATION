@@ -9,8 +9,6 @@ const express = require('express');
 const cors = require('cors');
 const { DynamoDBClient, ListTablesCommand} = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, ScanCommand, QueryCommand, PutCommand, GetCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
-const { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 //const jwt = require('jsonwebtoken');
 
 // Initialize DynamoDB client
@@ -20,11 +18,6 @@ const client = new DynamoDBClient({
 //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
 //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 //   },
-});
-
-// Initialize S3 client
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION || 'us-east-2',
 });
 
 const docClient = DynamoDBDocumentClient.from(client);
@@ -45,7 +38,6 @@ const USER_DETAILS = process.env.USER_DETAILS;
 const STUDENT_PROFILE = process.env.STUDENT_PROFILE;
 const PACKAGE_DETAILS = process.env.PACKAGE_DETAILS;
 const TEST_DETAILS = process.env.TEST_DETAILS;
-const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME || 'campus-registration-photos';
 
 // Initialize Express app
 const app = express();
@@ -63,66 +55,6 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   res.send('Welcome to the Campus Selection API');
 });
-
-// Helper functions for S3 operations
-const uploadPhotoToS3 = async (base64Data, studentId) => {
-  try {
-    // Remove data:image/jpeg;base64, prefix if present
-    const base64Image = base64Data.replace(/^data:image\/[a-z]+;base64,/, '');
-    const buffer = Buffer.from(base64Image, 'base64');
-    
-    // Generate unique filename
-    const fileName = `student-photos/${studentId}-${Date.now()}.jpg`;
-    
-    const command = new PutObjectCommand({
-      Bucket: S3_BUCKET_NAME,
-      Key: fileName,
-      Body: buffer,
-      ContentType: 'image/jpeg',
-      ACL: 'private'
-    });
-    
-    await s3Client.send(command);
-    return fileName;
-  } catch (error) {
-    console.error('Error uploading to S3:', error);
-    throw error;
-  }
-};
-
-const getPhotoUrlFromS3 = async (fileName) => {
-  try {
-    if (!fileName) return null;
-    
-    const command = new GetObjectCommand({
-      Bucket: S3_BUCKET_NAME,
-      Key: fileName,
-    });
-    
-    // Generate a signed URL that expires in 1 hour
-    const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-    return signedUrl;
-  } catch (error) {
-    console.error('Error getting S3 URL:', error);
-    return null;
-  }
-};
-
-const deletePhotoFromS3 = async (fileName) => {
-  try {
-    if (!fileName) return;
-    
-    const command = new DeleteObjectCommand({
-      Bucket: S3_BUCKET_NAME,
-      Key: fileName,
-    });
-    
-    await s3Client.send(command);
-  } catch (error) {
-    console.error('Error deleting from S3:', error);
-    // Don't throw error as this is cleanup
-  }
-};
 
 // const session = require('express-session');
 // app.use(session({
@@ -803,11 +735,6 @@ app.get('/institute/student/home/getprofile', async (req, res) => {
       return res.status(404).json({ success: false, message: 'Profile not found.' });
     }
     
-    // Get photo URL from S3 if photo_s3_key exists
-    if (Item.photo_s3_key) {
-      Item.photo_url = await getPhotoUrlFromS3(Item.photo_s3_key);
-    }
-    
     console.log('Profile found and returning to client');
     res.json({ success: true, profile: Item });
   } catch (error) {
@@ -842,7 +769,6 @@ app.post('/institute/student/home/profile', async (req, res) => {
   
   const {
     user_id,
-    student_id,
     student_firstname,
     student_lastname,
     father_name,
@@ -852,17 +778,11 @@ app.post('/institute/student/home/profile', async (req, res) => {
     gender,
     city,
     stprofile,
-    photo_data,  // Added photo_data parameter
-    updated_at   // Accept updated_at from request
+    photo_data  // Added photo_data parameter
   } = req.body;
-
-  // Use student_id if provided, otherwise use user_id
-  const primaryKey = student_id || user_id;
 
   console.log('Extracted fields:', {
     user_id,
-    student_id,
-    primaryKey,
     student_firstname,
     student_lastname,
     father_name,
@@ -872,65 +792,21 @@ app.post('/institute/student/home/profile', async (req, res) => {
     gender,
     city,
     stprofile,
-    photo_data: photo_data ? 'Photo data present' : 'No photo data',
-    updated_at
+    photo_data: photo_data ? 'Photo data present' : 'No photo data'
   });
 
-  if (!primaryKey || !student_firstname || !student_lastname || !email) {
+  if (!user_id || !student_firstname || !student_lastname || !email) {
     console.log('Validation failed - missing required fields');
-    return res.status(400).json({ success: false, message: 'Required fields missing. Need student_id/user_id, student_firstname, student_lastname, and email.' });
+    return res.status(400).json({ success: false, message: 'Required fields missing.' });
   }
 
   try {
     console.log('STUDENT_PROFILE table name:', STUDENT_PROFILE);
     
-    let photoS3Key = null;
-    let oldPhotoS3Key = null;
-    
-    // If there's existing profile, get the old photo key for cleanup
-    if (primaryKey) {
-      try {
-        const existingProfile = await docClient.send(new GetCommand({
-          TableName: STUDENT_PROFILE,
-          Key: { student_id: Number(primaryKey) }
-        }));
-        if (existingProfile.Item) {
-          oldPhotoS3Key = existingProfile.Item.photo_s3_key;
-        }
-      } catch (err) {
-        console.log('No existing profile found or error fetching:', err.message);
-      }
-    }
-    
-    // Handle photo upload to S3
-    if (photo_data && photo_data.startsWith('data:image')) {
-      console.log('Uploading photo to S3...');
-      try {
-        photoS3Key = await uploadPhotoToS3(photo_data, primaryKey);
-        console.log('Photo uploaded to S3 with key:', photoS3Key);
-        
-        // Delete old photo if it exists and is different
-        if (oldPhotoS3Key && oldPhotoS3Key !== photoS3Key) {
-          await deletePhotoFromS3(oldPhotoS3Key);
-          console.log('Old photo deleted from S3:', oldPhotoS3Key);
-        }
-      } catch (photoError) {
-        console.error('Failed to upload photo to S3:', photoError);
-        return res.status(500).json({ 
-          success: false, 
-          message: 'Failed to upload photo. Please try again.' 
-        });
-      }
-    } else if (oldPhotoS3Key) {
-      // Keep existing photo if no new photo provided
-      photoS3Key = oldPhotoS3Key;
-    }
-    
     const params = {
       TableName: STUDENT_PROFILE,
       Item: {
-        student_id: Number(primaryKey),
-        user_id: user_id ? Number(user_id) : Number(primaryKey),
+        student_id: Number(user_id),
         student_firstname,
         student_lastname,
         father_name: father_name || '',
@@ -940,8 +816,8 @@ app.post('/institute/student/home/profile', async (req, res) => {
         gender: gender || '',
         city: city || '',
         stprofile: stprofile || '',
-        photo_s3_key: photoS3Key,  // Store S3 key instead of base64
-        updated_at: updated_at || new Date().toISOString()
+        photo_data: photo_data || null,  // Store photo as base64 string
+        updated_at: new Date().toISOString()
       }
     };
     
@@ -951,9 +827,9 @@ app.post('/institute/student/home/profile', async (req, res) => {
     const result = await docClient.send(putCommand);
     
     console.log('DynamoDB put result:', result);
-    console.log('Profile saved successfully for student_id:', primaryKey);
+    console.log('Profile saved successfully for user_id:', user_id);
     
-    res.json({ success: true, message: `Profile saved successfully for student_id: ${primaryKey}` });
+    res.json({ success: true, message: `Profile saved successfully for user_id: ${user_id}` });
   } catch (error) {
     console.error('=== ERROR SAVING PROFILE ===');
     console.error('Error details:', error);
@@ -975,35 +851,6 @@ app.post('/institute/student/home/profile', async (req, res) => {
       error: error.message,
       errorType: error.name
     });
-  }
-});
-
-// GET signed URL for photo access
-app.get('/institute/student/home/photo/:student_id', async (req, res) => {
-  const { student_id } = req.params;
-  
-  if (!student_id) {
-    return res.status(400).json({ success: false, message: 'student_id is required' });
-  }
-
-  try {
-    // Get profile to find photo S3 key
-    const params = {
-      TableName: STUDENT_PROFILE,
-      Key: { student_id: Number(student_id) }
-    };
-    
-    const { Item } = await docClient.send(new GetCommand(params));
-    
-    if (!Item || !Item.photo_s3_key) {
-      return res.json({ success: true, photo_url: null, message: 'No photo found' });
-    }
-    
-    const photoUrl = await getPhotoUrlFromS3(Item.photo_s3_key);
-    res.json({ success: true, photo_url: photoUrl });
-  } catch (error) {
-    console.error('Error getting photo URL:', error);
-    res.status(500).json({ success: false, message: 'Failed to get photo URL' });
   }
 });
 

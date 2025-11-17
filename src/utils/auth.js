@@ -1,41 +1,42 @@
-// Authentication utility functions
+// Authentication utility functions for React frontend
 
-// Get current user from sessionStorage
 export const getCurrentUser = () => {
   try {
-    const storedUser = sessionStorage.getItem('authUser');
-    return storedUser ? JSON.parse(storedUser) : null;
+    const userData = sessionStorage.getItem('userData');
+    return userData ? JSON.parse(userData) : null;
   } catch (error) {
-    console.error('Error parsing user data from sessionStorage:', error);
+    console.error('Error getting current user:', error);
     return null;
   }
 };
 
-// Check if user is authenticated
-export const isAuthenticated = () => {
+export const requireAuth = (navigate) => {
   const user = getCurrentUser();
-  return user && user.user_id;
-};
-
-// Redirect to login if not authenticated
-export const requireAuth = () => {
-  if (!isAuthenticated()) {
-    window.location.href = '/';
+  if (!user) {
+    navigate('/login');
     return false;
   }
   return true;
 };
 
-// Clear user session and logout
-export const logout = () => {
-  sessionStorage.removeItem('authUser');
-  window.location.href = '/';
+export const getUserId = () => {
+  const user = getCurrentUser();
+  return user ? user.user_id : null;
 };
 
-// Store user data after successful login
+export const getUserDisplayName = () => {
+  const user = getCurrentUser();
+  return user ? (user.name || user.username) : 'User';
+};
+
+export const getUsername = () => {
+  const user = getCurrentUser();
+  return user ? user.username : null;
+};
+
 export const storeUserData = (userData) => {
   try {
-    sessionStorage.setItem('authUser', JSON.stringify(userData));
+    sessionStorage.setItem('userData', JSON.stringify(userData));
     return true;
   } catch (error) {
     console.error('Error storing user data:', error);
@@ -43,43 +44,37 @@ export const storeUserData = (userData) => {
   }
 };
 
-// Get user display name
-export const getUserDisplayName = () => {
-  const user = getCurrentUser();
-  return user ? (user.name || user.username || 'User') : 'User';
-};
-
-// Get user ID
-export const getUserId = () => {
-  const user = getCurrentUser();
-  return user ? user.user_id : null;
-};
-
-// Get username
-export const getUsername = () => {
-  const user = getCurrentUser();
-  return user ? user.username : null;
-};
-
-// Get user role
-export const getUserRole = () => {
-  const user = getCurrentUser();
-  return user ? user.role_id : null;
-};
-
-// Navigate to dashboard based on user role
-export const navigateToDashboard = (navigate) => {
-  const role = getUserRole();
-  console.log('Navigating based on role:', role);
-  
-  if (role === 2) {
-    // Student role - navigate to student dashboard
-    navigate('/dashboard');
-  } else if (role === 1) {
-    // Admin/Teacher role - navigate to campus selection
-    navigate('/campus');
-  } else {
-    // Default fallback
-    navigate('/campus');
+export const logout = () => {
+  try {
+    sessionStorage.removeItem('userData');
+    sessionStorage.clear();
+    return true;
+  } catch (error) {
+    console.error('Error during logout:', error);
+    return false;
   }
+};
+
+export const navigateToDashboard = (navigate) => {
+  const user = getCurrentUser();
+  if (user) {
+    if (user.role_id === 1) {
+      navigate('/admin-dashboard');
+    } else if (user.role_id === 2) {
+      navigate('/student-dashboard');
+    } else {
+      navigate('/dashboard');
+    }
+  } else {
+    navigate('/login');
+  }
+};
+
+export const isAuthenticated = () => {
+  return getCurrentUser() !== null;
+};
+
+export const hasRole = (roleId) => {
+  const user = getCurrentUser();
+  return user && user.role_id === roleId;
 };

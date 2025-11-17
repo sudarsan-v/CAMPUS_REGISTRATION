@@ -4,12 +4,17 @@
 /node_modules
 /.pnp
 .pnp.js
+src/backend/node_modules/
 
 # testing
 /coverage
 
 # production
 /build
+
+# environment variables
+.env
+src/backend/.env
 
 # misc
 .DS_Store
@@ -21,3 +26,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# AWS deployment files
+src/backend/src.zip
+src/backend/src_1.zip
+
+# Package lock files
+src/backend/package-lock.json

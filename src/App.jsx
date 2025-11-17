@@ -18,6 +18,17 @@ import EditCampusPage from './pages/EditCampusPage';
 import TakeOnlineTest from './pages/TakeOnlineTest';
 import ExamInfo from './pages/ExamInfo';
 import ReportsPage from './pages/ReportsPage';
+import CumulativePerformancePage from './pages/CumulativePerformancePage';
+import ErrorListPage from './pages/ErrorListPage';
+import NotificationsPage from './pages/NotificationsPage';
+import NotificationDetailPage from './pages/NotificationDetailPage';
+import ReasonsForWrongAttemptPage from './pages/ReasonsForWrongAttemptPage';
+import ReasonWiseCountPage from './pages/ReasonWiseCountPage';
+import PracticeWrongUnattemptedPage from './pages/PracticeWrongUnattemptedPage';
+import TimeTakenPage from './pages/TimeTakenPage';
+import QuestionPaperWeightagePage from './pages/QuestionPaperWeightagePage';
+import ProgressReportPage from './pages/ProgressReportPage';
+
 function App() {
   return (
     <Router>
@@ -31,7 +42,7 @@ function App() {
         <Route path="/solution-entry" element={<><Header /><Navigation /><SolutionEntryPage /></>} />
         <Route path="/question-change" element={<><Header /><Navigation /><QuestionChangePage /></>} />
         <Route path="/paragraph-modification" element={<><Header /><Navigation /><ParagraphModificationPage /></>} />
-        <Route path="/change-password" element={<ChangePasswordPage />} />
+        <Route path="/change-password" element={<><Header /><ChangePasswordPage /></>} />
         {/* <Route path="/add-paragraph" element={<><Header /><Navigation /><AddParagraphPage /></>} /> */}
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/add-campus" element={<><Header /><Navigation /><AddCampusPage /></>} />
@@ -39,6 +50,16 @@ function App() {
         <Route path="/take-test" element={<TakeOnlineTest />} />
         <Route path="/exam-info/:testId" element={<ExamInfo />} />
         <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/cumulative-performance" element={<CumulativePerformancePage />} />
+        <Route path="/error-list" element={<ErrorListPage />} />
+        <Route path="/reasons-wrong-attempt/:questionId" element={<ReasonsForWrongAttemptPage />} />
+        <Route path="/reason-wise-count" element={<ReasonWiseCountPage />} />
+        <Route path="/practice-wrong-unattempted" element={<PracticeWrongUnattemptedPage />} />
+        <Route path="/time-taken" element={<TimeTakenPage />} />
+        <Route path="/question-paper-weightage" element={<QuestionPaperWeightagePage />} />
+        <Route path="/progress-report" element={<ProgressReportPage />} />
+        <Route path="/notifications" element={<><Header /><NotificationsPage /></>} />
+        <Route path="/notifications/:id" element={<><Header /><NotificationDetailPage /></>} />
         </Routes>
     </Router>
   );

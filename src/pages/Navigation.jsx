@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api-detailed.js';
 
 function Navigation() {
   const [questions, setQuestions] = useState([]);
@@ -7,7 +8,7 @@ function Navigation() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/questions')
+    fetch(API_ENDPOINTS.QUESTIONS)
       .then(response => response.json())
       .then(data => setQuestions(data))
       .catch(error => console.error('Error fetching questions:', error));

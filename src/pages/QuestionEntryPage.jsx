@@ -1,28 +1,3 @@
-// import React from 'react';
-// import { useNavigate } from 'react-router-dom'; // For navigation
-
-// function QuestionEntryPage() {
-//   const navigate = useNavigate(); // Hook for programmatic navigation
-
-//   const handleAddNewQuestion = () => {
-//     navigate('/new-question-form'); // Redirect to new question form page
-//   };
-
-//   return (
-//     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
-//       <h2>Question Entry Page</h2>
-//       <button
-//         onClick={handleAddNewQuestion}
-//         style={{ backgroundColor: '#005F73', color: 'white', padding: '10px 20px', border: 'none', cursor: 'pointer' }}
-//       >
-//         Add New Question
-//       </button>
-//     </div>
-//   );
-// }
-
-// export default QuestionEntryPage;
-
 import React, { useState } from 'react';
 
 function QuestionEntryPage() {

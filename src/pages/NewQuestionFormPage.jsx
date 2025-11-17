@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api-detailed.js';
 
 function NewQuestionFormPage() {
   const [questionText, setQuestionText] = useState('');
@@ -34,7 +35,7 @@ function NewQuestionFormPage() {
 
     try {
       const response = await axios.post(
-        'https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/questions',
+        API_ENDPOINTS.QUESTIONS,
         newQuestion
       );
       if (response.status === 201) {

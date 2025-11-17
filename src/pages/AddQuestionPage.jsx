@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api-detailed.js';
 
 function AddQuestionPage() {
   const [questionText, setQuestionText] = useState('');
@@ -24,7 +25,7 @@ function AddQuestionPage() {
     };
 
     try {
-      await axios.post('https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/questions', newQuestion);
+      await axios.post(API_ENDPOINTS.QUESTIONS, newQuestion);
       setSuccess('Question added successfully!');
       setQuestionText(''); // Clear input
     } catch (err) {

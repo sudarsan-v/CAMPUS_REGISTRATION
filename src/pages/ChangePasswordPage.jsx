@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
 import { requireAuth, getUsername, logout, navigateToDashboard } from '../utils/auth';
+import { API_ENDPOINTS } from '../config/api-detailed';
 
 const ChangePasswordPage = () => {
   const [username, setUsername] = useState('');
@@ -40,7 +41,7 @@ const ChangePasswordPage = () => {
       return;
     }
     try {
-      const response = await axios.post('https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/changepassword', {
+      const response = await axios.post(API_ENDPOINTS.CHANGE_PASSWORD, {
         username,
         oldPassword,
         newPassword,

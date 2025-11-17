@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api-detailed';
 
 function CampusPage() {
   const [data, setData] = useState([]);
@@ -21,9 +22,9 @@ function CampusPage() {
   const fetchData = async (search = '', showHiddenParam = showHidden) => {
     setLoading(false);
     try {
-      let url = 'https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/campus';
+      let url = API_ENDPOINTS.CAMPUS;
       if (search) {
-        url = `https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/campus/search?search=${encodeURIComponent(search)}`;
+        url = API_ENDPOINTS.CAMPUS_SEARCH(search);
       }
       url += `${search ? '&' : '?'}showHidden=${showHiddenParam}`;
       const response = await axios.get(url);
@@ -59,7 +60,7 @@ function CampusPage() {
 
   const handleHide = async (row, checked) => {
     try {
-      await axios.put(`https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/editcampus/${row.id}`, { hidden: checked });
+      await axios.put(API_ENDPOINTS.EDIT_CAMPUS(row.id), { hidden: checked });
       // Update the local state immediately to reflect the change
       setData(prevData => 
         prevData.map(item => 

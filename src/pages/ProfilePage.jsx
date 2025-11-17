@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCurrentUser, requireAuth, getUserId } from '../utils/auth';
-import API_BASE_URL, { PROFILE_API_URL } from '../config/api-detailed';
+import { API_ENDPOINTS } from '../config/api-detailed';
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState({
@@ -53,7 +53,7 @@ const ProfilePage = () => {
           return;
         }
 
-        const apiUrl = `${PROFILE_API_URL}/institute/student/home/getprofile?student_id=${userId}`;
+        const apiUrl = API_ENDPOINTS.PROFILE_GET(userId);
         console.log('Fetching from URL:', apiUrl);
         
         const response = await fetch(apiUrl);
@@ -86,7 +86,7 @@ const ProfilePage = () => {
 
   const fetchPhotoUrl = async (studentId) => {
     try {
-      const photoResponse = await fetch(`${PROFILE_API_URL}/institute/student/home/photo/${studentId}`);
+      const photoResponse = await fetch(API_ENDPOINTS.PROFILE_PHOTO(studentId));
       const photoData = await photoResponse.json();
       
       if (photoData.success && photoData.photo_url) {
@@ -148,9 +148,9 @@ const ProfilePage = () => {
       }
       
       console.log('Request data being sent:', JSON.stringify(requestData, null, 2));
-      console.log('API endpoint:', `${PROFILE_API_URL}/institute/student/home/profile`);
+      console.log('API endpoint:', API_ENDPOINTS.PROFILE_UPDATE);
 
-      const response = await fetch(`${PROFILE_API_URL}/institute/student/home/profile`, {
+      const response = await fetch(API_ENDPOINTS.PROFILE_UPDATE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)

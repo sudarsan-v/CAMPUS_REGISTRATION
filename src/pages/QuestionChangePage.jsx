@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_ENDPOINTS } from '../config/api-detailed.js';
 
 function QuestionChangePage() {
   const [courses, setCourses] = useState([]);
@@ -13,14 +14,14 @@ function QuestionChangePage() {
   const [questions, setQuestions] = useState([]);
 
   useEffect(() => {
-  fetch('https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/question/change?type=getcourses')
+  fetch(API_ENDPOINTS.QUESTION_CHANGE_COURSES())
     .then(res => res.json())
     .then(data => setCourses(data.courselist || []))
     .catch(err => setCourses([]));
 }, []);
   // Fetch all courses on mount
   useEffect(() => {
-    fetch('https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/question/change?type=getcourses')
+    fetch(API_ENDPOINTS.QUESTION_CHANGE_COURSES())
       .then(res => res.json())
       .then(data => setCourses(data.courselist || []))
       .catch(err => setCourses([]));
@@ -29,7 +30,7 @@ function QuestionChangePage() {
   // Fetch classes when course changes
   useEffect(() => {
     if (course) {
-      fetch(`https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/question/change?type=getclasses&courseid=${course}`)
+      fetch(API_ENDPOINTS.QUESTION_CHANGE_CLASSES(course))
         .then(res => res.json())
         .then(data => setClasses(data.classlist || []))
         .catch(err => setClasses([]));
@@ -44,7 +45,7 @@ function QuestionChangePage() {
   // Fetch subjects when class changes
   useEffect(() => {
     if (course && className) {
-      fetch(`https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/question/change?type=getsubjects&courseid=${course}&classid=${className}`)
+      fetch(API_ENDPOINTS.QUESTION_CHANGE_SUBJECTS(course, className))
         .then(res => res.json())
         .then(data => setSubjects(data.sublist || []))
         .catch(err => setSubjects([]));
@@ -57,7 +58,7 @@ function QuestionChangePage() {
   // Fetch chapters when subject changes
   useEffect(() => {
     if (course && className && subject) {
-      fetch(`https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/question/change?type=getmaintopics&courseid=${course}&classid=${className}&subjectid=${subject}`)
+      fetch(API_ENDPOINTS.QUESTION_CHANGE_CHAPTERS(course, className, subject))
         .then(res => res.json())
         .then(data => setChapters(data.maintopiclist || []))
         .catch(err => setChapters([]));
@@ -176,7 +177,7 @@ function QuestionChangePage() {
               onMouseOver={e => e.target.style.background = '#0099cc'}
               onMouseOut={e => e.target.style.background = '#57c3e8'}
               onClick={() => {
-  fetch(`https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/questions?courseid=${course}&classid=${className}&subjectid=${subject}&chapterid=${chapter}`)
+  fetch(API_ENDPOINTS.QUESTION_FILTER(course, className, subject, chapter))
     .then(response => response.json())
     .then(data => setQuestions(Array.isArray(data) ? data : (data.questions || [])))
     .catch(error => {
@@ -184,12 +185,6 @@ function QuestionChangePage() {
       setQuestions([]);
     });
 }}
-              // onClick={() => {
-              //   fetch(`https://j0x67zhvpb.execute-api.us-east-2.amazonaws.com/dev/api/questions?courseid=${course}&classid=${className}&subjectid=${subject}&chapterid=${chapter}`)
-              //     .then(response => response.json())
-              //     .then(data => console.log(data))
-              //     .catch(error => console.error('Error fetching questions:', error));
-              // }}
             >
               Get Questions
             </button>
